@@ -1,4 +1,8 @@
 #include "tg0_wifi.h"
+#include <list>
+#include <vector>
+using namespace std;
+
 // Replace these with your WiFi network settings
 char* ssid = "ESP8266"; //replace this with your WiFi network name
 char* password = "ESP8266Test"; //replace this with your WiFi network password
@@ -12,11 +16,11 @@ WiFiClient* tg0_clients[MAX_CLIENTS] = { NULL };
 byte buff[200] = {0};
 
 void setup_server(char* ssid = ssid, char* password = password)
-{
-  /* You can remove the password parameter if you want the AP to be open. */
-  WiFi.mode(WIFI_OFF);
-  WiFi.mode(WIFI_AP);
+{/* You can remove the password parameter if you want the AP to be open. */
   
+  WiFi.mode(WIFI_OFF);
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_AP);
   boolean result = WiFi.softAP(ssid, password, channel);
   if(result==true) {
     Serial.println("wifi established!");
@@ -32,9 +36,15 @@ void check_client() {
   WiFiClient client = tg0_server.available();
   if (client != NULL) {
     Serial.println(client.remoteIP());
-
+  
     for (int i = 0; i < MAX_CLIENTS; i++) {
-      if (tg0_clients[i] == NULL) {
+      if (tg0_clients[i] != NULL && tg0_clients[i]->remoteIP() == client.remoteIP()) {
+        tg0_clients[i]->stop();
+        delete tg0_clients[i];
+        tg0_clients[i] = new WiFiClient(client);
+        break;
+      }
+      else if (tg0_clients[i] == NULL) {
         Serial.print(" client number: "); Serial.print(i);
         tg0_clients[i] = new WiFiClient(client); 
         tg0_clients[i]->setTimeout(10);

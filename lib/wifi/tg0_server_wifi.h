@@ -6,12 +6,15 @@
 #endif
 #if defined (ESP32)
     #include <WiFi.h>
+    #include <WiFiClient.h>
+    #include <WiFiServer.h>
 #endif
 
 #include <Arduino.h>
-
-#define DATA_PORT 8000
-#define MAX_CLIENTS 4
+#include "wifi_config.h"
 extern void setup_server(char* ssid, char* password);
 extern void check_client();
+extern void client_to_serial();
+extern void server_to_client(byte* data, int data_size);
+extern void run_server();
 #endif

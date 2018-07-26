@@ -1,6 +1,7 @@
 #include "tg0_client_wifi.h"
 
 WiFiClient tg0_client;
+#define RECONNECT_TIMEOUT 3
 // Replace these with your WiFi network settings
 char *server_ssid = "ESP8266"; //replace this with your WiFi network name
 char *server_password = "ESP8266Test"; //replace this with your WiFi network password
@@ -13,10 +14,10 @@ void setup_client_wifi(char* new_ssid=server_ssid, char* new_password=server_pas
     WiFi.begin(server_ssid, server_password);
     while (WiFi.status() != WL_CONNECTED) {
         /* wait */
-        delay(3); //5 milliseconds
+        delay(RECONNECT_TIMEOUT); //5 milliseconds
     }
     while (!tg0_client.connect(REMOTE_IP_ADDRESS, DATA_PORT)) {
-        delay(3); //5 milliseconds, I found that reducing from 10 to 3 milliseconds improved the reconnect time;
+        delay(RECONNECT_TIMEOUT); //5 milliseconds, I found that reducing from 10 to 3 milliseconds improved the reconnect time;
     }
     tg0_client.setTimeout(WIFI_TIMEOUT);
     tg0_client.setNoDelay(true);
@@ -29,21 +30,19 @@ void check_server()
         if (WiFi.status() == WL_CONNECTED) {
              tg0_client.stop();
             while (!tg0_client.connect(REMOTE_IP_ADDRESS, DATA_PORT)) {
-                delay(3);
+                delay(RECONNECT_TIMEOUT);
             }
             tg0_client.setTimeout(WIFI_TIMEOUT);
             tg0_client.setNoDelay(true);
         }
         else if (WiFi.status() == WL_DISCONNECTED) {
             tg0_client.stop(); //close existing connection with remote server
-            //WiFi.disconnect(); //not sure if this line is important
-            //WiFi.mode(WIFI_STA);
             WiFi.begin(server_ssid, server_password);
             while (WiFi.status() == WL_CONNECTED) {
-                delay(3);
+                delay(RECONNECT_TIMEOUT);
             }
             while (!tg0_client.connect(REMOTE_IP_ADDRESS, DATA_PORT)) {
-                delay(3);
+                delay(RECONNECT_TIMEOUT);
             }
             tg0_client.setTimeout(WIFI_TIMEOUT);
             tg0_client.setNoDelay(true);

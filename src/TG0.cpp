@@ -10,7 +10,7 @@ void setup() {
   while(!Serial);
   /* make sure the password is at least 8 characters, 
   and the username has no weird characters */
-  setup_client_wifi("GWIFI", "WIFIPASS");
+  setup_server("GWIFI", "WIFIPASS");
 }
 
 int data = 0;
@@ -34,7 +34,7 @@ void run_server() {
 
 void loop() {
   long before = millis();
-  run_client();
+  run_server();
   long elapsed = millis() - before;
   int sleep = timePerLoop - elapsed;
   if (sleep < 0) {

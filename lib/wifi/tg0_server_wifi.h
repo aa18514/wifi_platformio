@@ -10,7 +10,6 @@
     #include <WiFiServer.h>
 #endif
 
-#include <Arduino.h>
 #include "wifi_config.h"
 extern void setup_server(char* ssid, char* password);
 extern void check_client();

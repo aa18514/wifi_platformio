@@ -43,7 +43,7 @@ void setup_server(char* ssid = ssid, char* password = password)
 
 void check_client() {
   /* check all clients and accept new clients*/
-  //for(int i = 0 ; i < MAX_CLIENTS; i ++)
+  for(int i = 0 ; i < MAX_CLIENTS; i ++)
   {
     WiFiClient client = tg0_server.available();
     if (client) { // add new client
